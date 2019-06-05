@@ -24,7 +24,7 @@ if (cmd.init) {
   // All other functionality happens with existing database
   database.loadExistingDatabase((err) => {
     if (err) { /* handled upstream */ return }
-    console.log('ok, found ' + database.events.count() + ' events')
+    console.log('loaded ' + database.events.count() + ' events')
     if (cmd.search) {
       const found = database.events
         .chain()
@@ -49,7 +49,27 @@ if (cmd.init) {
 }
 
 function doOutput (found) {
+  const humanDateFormat = {
+    weekday: 'short',
+    month: 'long',
+    day: '2-digit'
+  }
+  const timeFormat = {
+    hour12: false,
+    hour: '2-digit',
+    minute: '2-digit'
+  }
   found.map((event) => {
-    console.log(event.start_date + ' - ' + event.title)
+    const start = new Date(event.start_date)
+    const end = new Date(event.end_date)
+    console.log(
+      start.toLocaleDateString('en-US', humanDateFormat) +
+      ', ' +
+      start.toLocaleTimeString('en-US', timeFormat) +
+      ' to ' +
+      end.toLocaleTimeString('en-US', timeFormat) +
+      ' - ' +
+      event.title
+    )
   })
 }
