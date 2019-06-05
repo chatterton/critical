@@ -13,6 +13,9 @@
     "test": "echo \"Error: no test specified\" && exit 1",
     "standardize": "standard --fix"
   },
-  "author": "",
+  "bin": {
+    "critical": "./index.js"
+  },
+  "author": "Jack C",
   "license": "MIT"
 }
