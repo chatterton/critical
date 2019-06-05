@@ -8,7 +8,7 @@ module.exports = {
 
   getCurrentDirectory: () => {
     const cwd = process.cwd()
-    return path.dirname(cwd) + path.sep + path.basename(cwd)
+    return path.dirname(cwd) + path.sep + path.basename(cwd) + path.sep
   },
 
   directoryExists: (filePath) => {

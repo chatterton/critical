@@ -2,6 +2,7 @@
 
 const files = require('./src/files')
 const cmd = require('commander')
+const database = require('./src/database')
 
 console.log('Critical Northwest events parser in ' + files.getCurrentDirectory())
 
@@ -13,4 +14,9 @@ cmd
 // Automatically display help if no arguments
 if (!process.argv.slice(2).length) {
   cmd.outputHelp()
+}
+
+// Process website json if needed
+if (cmd.init) {
+  database.initWithFile(cmd.init)
 }
