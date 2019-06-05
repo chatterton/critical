@@ -4,6 +4,8 @@ const files = require('./files')
 
 const dbFile = files.getCurrentDirectory() + 'database.json'
 
+var events
+
 function initWithFile (filename) {
   console.log('Reading file: ' + filename)
   fs.readFile(filename, 'utf8', (err, contents) => {
@@ -34,4 +36,23 @@ function initDatabaseFromJSON (json) {
   })
 }
 
+function loadExistingDatabase(callback) {
+  const db = new Loki(dbFile)
+  db.loadDatabase({}, (err) => {
+    if (err) {
+      console.log("Error loading existing database: "+err)
+      callback(err)
+      return
+    }
+    events = db.getCollection('events')
+    callback()
+  })
+}
+
+function getEvents() {
+  return events
+}
+
 exports.initWithFile = initWithFile
+exports.loadExistingDatabase = loadExistingDatabase
+exports.getEvents = getEvents
