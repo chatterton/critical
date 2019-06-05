@@ -23,6 +23,33 @@ if (cmd.init) {
 } else {
   // All other functionality happens with existing database
   database.loadExistingDatabase((err) => {
-    console.log("ok: "+database.getEvents().count())
+    if (err) { /* handled upstream */ return }
+    console.log('ok, found ' + database.events.count() + ' events')
+    if (cmd.search) {
+      const found = database.events
+        .chain()
+        .find({
+          '$or': [
+            { 'description': { '$regex': [cmd.search, 'i'] } },
+            { 'title': { '$regex': [cmd.search, 'i'] } },
+            { 'location': { '$regex': [cmd.search, 'i'] } },
+            { 'author': { '$regex': [cmd.search, 'i'] } }
+          ] }
+        )
+        .simplesort('start_date')
+        .data()
+      if (found.length > 0) {
+        console.log('found: ' + found.length)
+        doOutput(found)
+      } else {
+        console.log('nothing found')
+      }
+    }
+  })
+}
+
+function doOutput (found) {
+  found.map((event) => {
+    console.log(event.start_date + ' - ' + event.title)
   })
 }

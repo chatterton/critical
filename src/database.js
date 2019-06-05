@@ -5,8 +5,13 @@ const files = require('./files')
 const dbFile = files.getCurrentDirectory() + 'database.json'
 
 var events
+var db
 
 function initWithFile (filename) {
+  if (fs.existsSync(dbFile)) {
+    console.log('Clearing previous database')
+    fs.unlinkSync(dbFile)
+  }
   console.log('Reading file: ' + filename)
   fs.readFile(filename, 'utf8', (err, contents) => {
     if (err) {
@@ -21,8 +26,8 @@ function initWithFile (filename) {
 
 function initDatabaseFromJSON (json) {
   console.log('Initializing database -- ' + json.length + ' entries')
-  const db = new Loki(dbFile)
-  const events = db.addCollection('events')
+  db = db || new Loki(dbFile)
+  events = db.addCollection('events')
   const processed = json.reduce((accumulator, event) => {
     events.insert(event)
     return accumulator + 1
@@ -36,23 +41,18 @@ function initDatabaseFromJSON (json) {
   })
 }
 
-function loadExistingDatabase(callback) {
-  const db = new Loki(dbFile)
+function loadExistingDatabase (callback) {
+  db = db || new Loki(dbFile)
   db.loadDatabase({}, (err) => {
     if (err) {
-      console.log("Error loading existing database: "+err)
+      console.log('Error loading existing database: ' + err)
       callback(err)
       return
     }
-    events = db.getCollection('events')
+    exports.events = events = db.getCollection('events')
     callback()
   })
 }
 
-function getEvents() {
-  return events
-}
-
 exports.initWithFile = initWithFile
 exports.loadExistingDatabase = loadExistingDatabase
-exports.getEvents = getEvents
