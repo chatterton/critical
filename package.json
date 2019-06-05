@@ -4,6 +4,7 @@
   "description": "events parser and database with search and output",
   "main": "index.js",
   "dependencies": {
+    "commander": "^2.20.0",
     "lokijs": "^1.5.6"
   },
   "devDependencies": {
