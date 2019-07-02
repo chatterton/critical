@@ -10,6 +10,7 @@ cmd
   .version('0.0.1', '-v, --version')
   .option('-i, --init <filename>', 'initialize internal database from saved website json')
   .option('-s, --search <string>', 'full text search')
+  .option('-r, --rating <string>', 'return only events with this rating -- G, PG, PG-13, R, or X')
   .parse(process.argv)
 
 // Automatically display help if no arguments
@@ -26,18 +27,21 @@ if (cmd.init) {
     if (err) { /* handled upstream */ return }
     console.log('loaded ' + database.events.count() + ' events')
     if (cmd.search) {
-      const found = database.events
+      var finder = database.events
         .chain()
         .find({
           '$or': [
             { 'description': { '$regex': [cmd.search, 'i'] } },
             { 'title': { '$regex': [cmd.search, 'i'] } },
-            { 'location': { '$regex': [cmd.search, 'i'] } },
-            { 'author': { '$regex': [cmd.search, 'i'] } }
-          ] }
-        )
-        .simplesort('start_date')
-        .data()
+            { 'venue.venue': { '$regex': [cmd.search, 'i'] } }
+          ]
+        })
+      if (cmd.rating) {
+        finder = finder.find( { 'venue.address': { '$regex': ['Rating: '+cmd.rating, 'i'] } } )
+      }
+      finder = finder.simplesort('start_date')
+
+      const found = finder.data()
       if (found.length > 0) {
         console.log('found: ' + found.length)
         doOutput(found)
