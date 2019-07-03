@@ -3,8 +3,7 @@
 const files = require('./src/files')
 const cmd = require('commander')
 const database = require('./src/database')
-
-console.log('Critical Northwest events parser in ' + files.getCurrentDirectory())
+const entities = require('html-entities').AllHtmlEntities
 
 cmd
   .version('0.0.1', '-v, --version')
@@ -73,7 +72,9 @@ function doOutput (found) {
       ' to ' +
       end.toLocaleTimeString('en-US', timeFormat) +
       ' - ' +
-      event.title
+      entities.decode(event.title) +
+      ' @ ' +
+      entities.decode(event.venue.venue)
     )
   })
 }

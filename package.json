@@ -5,6 +5,7 @@
   "main": "index.js",
   "dependencies": {
     "commander": "^2.20.0",
+    "html-entities": "^1.2.1",
     "lokijs": "^1.5.6"
   },
   "devDependencies": {
