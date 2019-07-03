@@ -109,8 +109,13 @@ function doCSVOutput (found) {
 
   // items
   found.map((event) => {
-    var [_, rating] = event.venue.address.split(' Rating: ')
-    rating = rating.replace(' (Red Light)','')
+    var rating = ''
+    if (event.venue.address) {
+      var [_, actualRating] = event.venue.address.split(' Rating: ')
+      rating = actualRating.replace(' (Red Light)','')
+    } else {
+      rating = ''
+    }
     const start = new Date(event.start_date)
     const end = new Date(event.end_date)
 
